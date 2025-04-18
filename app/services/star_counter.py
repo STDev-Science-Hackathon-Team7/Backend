@@ -43,12 +43,31 @@ class StarCounter:
 
             gray = cv2.cvtColor(original_img, cv2.COLOR_BGR2GRAY)       # 그레이스케일 변환
             blurred = cv2.GaussianBlur(gray, (11, 11), 0)                   # 가우시안 블러로 노이즈 제거
+
+            # 다양한 밝기 조건에서도 별을 감지할 수 있도록
+            thresh = cv2.adaptiveThreshold(
+                blurred,
+                255,
+                cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                cv2.THRESH_BINARY,
+                15,
+                -2
+            )
+
+             # 아주 밝은 별을 감지하기 위한 고정 임계값을 추가로 적용 
+            _, bright_stars = cv2.threshold(blurred, 200, 255, cv2.THRESH_BINARY)
+
+            # 두 임계값 결과를 결합
+            combined = cv2.bitwise_or(thresh, bright_stars)
+
             processing_time = (datetime.now() - start_time).total_seconds()
 
             return {
                 "star_count": 0,  
                 "processing_time": processing_time,
-                "preprocessed_image_shape": blurred.shape if blurred is not None else None
+                "adaptive_threshold_shape": thresh.shape if thresh is not None else None,
+                "bright_stars_shape": bright_stars.shape if bright_stars is not None else None,
+                "combined_threshold_shape": combined.shape if combined is not None else None
             }
 
         except FileNotFoundError as e:
