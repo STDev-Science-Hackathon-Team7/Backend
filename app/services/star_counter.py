@@ -98,11 +98,13 @@ class StarCounter:
 
             processing_time = (datetime.now() - start_time).total_seconds()
             star_count = len(stars)
+            star_category = self.determine_star_count_category(star_count)
 
             return {
                 "star_count": star_count,
                 "stars": stars,
-                "processing_time": processing_time
+                "processing_time": processing_time,
+                "star_category": star_category
             }
 
         except FileNotFoundError as e:
@@ -111,5 +113,24 @@ class StarCounter:
         except Exception as e:
             logger.error(f"별 카운팅 에러 : {str(e)}")
             raise
+    
+    def determine_star_count_category(self, star_count: int) -> str:
+        """
+        별 개수에 따른 관측 카테고리를 결정하는 함수
+
+        Args:
+            star_count: 감지된 별의 개수
+
+        Returns:
+            str: 관측 카테고리 (최상급/좋음/보통/나쁨)
+        """
+        if star_count >= 1000:
+            return "최상급"
+        elif star_count >= 300:
+            return "좋음"
+        elif star_count >= 30:
+            return "보통"
+        else:
+            return "나쁨"
 
 star_counter = StarCounter()
