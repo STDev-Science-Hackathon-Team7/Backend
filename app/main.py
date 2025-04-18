@@ -1,6 +1,8 @@
 from fastapi import FastAPI, HTTPException, Request, logger
 from fastapi.responses import JSONResponse
 
+from app.routers import observations
+
 app = FastAPI(
     title="별 볼일 있는 지도 API",
     description="빛공해 데이터 기반 밤하늘 사진 분석 및 별 관측 장소 추천 서비스",
@@ -9,6 +11,8 @@ app = FastAPI(
     redoc_url="/api/redoc",
     openapi_url="/api/openapi.json",
 )
+
+app.include_router(observations.router)
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
