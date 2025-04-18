@@ -29,3 +29,6 @@ async def http_exception_handler(request: Request, exc: HTTPException):
 async def root():
     return {"message": "Counting Stars API"}
 
+@app.get("/health/")
+async def health_check():
+    return {"status": "ok"}
