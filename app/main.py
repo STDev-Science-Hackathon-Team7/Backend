@@ -1,4 +1,5 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Request, logger
+from fastapi.responses import JSONResponse
 
 app = FastAPI(
     title="별 볼일 있는 지도 API",
@@ -9,6 +10,22 @@ app = FastAPI(
     openapi_url="/api/openapi.json",
 )
 
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    logger.error(f"전역 예외 발생: {str(exc)}")
+    return JSONResponse(
+        status_code=500,
+        content={"message": "서버 내부 오류가 발생했습니다.", "detail": str(exc)}
+    )
+
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"message": exc.detail}
+    )
+
 @app.get("/")
 async def root():
     return {"message": "Counting Stars API"}
+
