@@ -2,6 +2,7 @@ import cv2
 import os
 from datetime import datetime
 from fastapi import logger
+import numpy as np
 from app.config import settings
 
 class StarCounter:
@@ -71,14 +72,30 @@ class StarCounter:
                 cv2.CHAIN_APPROX_SIMPLE
             )
 
+            min_area = 3  
+            max_area = 150  
+            min_circularity = 0.3  
+
+            stars = []
+            for contour in contours:
+                area = cv2.contourArea(contour)
+
+                if min_area <= area <= max_area:
+                    perimeter = cv2.arcLength(contour, True)        # 원형도 계산
+                    if perimeter == 0:
+                        continue
+                    circularity = 4 * np.pi * area / (perimeter * perimeter)
+
+                    if circularity >= min_circularity:              # 원형도 필터링
+                        stars.append(contour)
+
             processing_time = (datetime.now() - start_time).total_seconds()
+            star_count = len(stars)
 
             return {
-                "star_count": 0,  
+                "star_count": star_count,
                 "processing_time": processing_time,
-                "adaptive_threshold_shape": thresh.shape if thresh is not None else None,
-                "bright_stars_shape": bright_stars.shape if bright_stars is not None else None,
-                "combined_threshold_shape": combined.shape if combined is not None else None
+                "filtered_stars_count": star_count
             }
 
         except FileNotFoundError as e:
