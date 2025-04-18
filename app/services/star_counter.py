@@ -60,6 +60,17 @@ class StarCounter:
             # 두 임계값 결과를 결합
             combined = cv2.bitwise_or(thresh, bright_stars)
 
+            # 노이즈 제거
+            kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+            opening = cv2.morphologyEx(combined, cv2.MORPH_OPEN, kernel)
+
+            # 연결된 컴포넌트 찾아서 별 감지
+            contours, _ = cv2.findContours(
+                opening,
+                cv2.RETR_EXTERNAL,
+                cv2.CHAIN_APPROX_SIMPLE
+            )
+
             processing_time = (datetime.now() - start_time).total_seconds()
 
             return {
@@ -74,7 +85,7 @@ class StarCounter:
             logger.error(f"파일 오류: {e}")
             raise
         except Exception as e:
-            logger.error(f"별 카운팅 (전처리) 에러 : {str(e)}")
+            logger.error(f"별 카운팅 에러 : {str(e)}")
             raise
 
 star_counter = StarCounter()
