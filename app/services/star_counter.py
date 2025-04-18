@@ -99,12 +99,14 @@ class StarCounter:
             processing_time = (datetime.now() - start_time).total_seconds()
             star_count = len(stars)
             star_category = self.determine_star_count_category(star_count)
+            ui_message = self.get_star_count_message(star_count, star_category)
 
             return {
                 "star_count": star_count,
                 "stars": stars,
                 "processing_time": processing_time,
-                "star_category": star_category
+                "star_category": star_category,
+                "ui_message": ui_message
             }
 
         except FileNotFoundError as e:
@@ -132,5 +134,25 @@ class StarCounter:
             return "보통"
         else:
             return "나쁨"
+    
+    def get_star_count_message(self, star_count: int, category: str) -> str:
+        """
+        사용자에게 표시할 별 카운팅 결과 메시지 생성
+
+        Args:
+            star_count: 감지된 별의 개수
+            category: 별 관측 카테고리
+
+        Returns:
+            str: 사용자 친화적 메시지
+        """
+        if category == "최상급":
+            return f"오늘 {star_count}별이 관측되었어요. 은하수도 선명하게 관측할 수 있는 최상의 조건입니다."
+        elif category == "좋음":
+            return f"오늘 {star_count}개의 별이 관측되었어요. 많은 별자리를 볼 수 있는 좋은 관측 조건입니다."
+        elif category == "보통":
+            return f"오늘 {star_count}개의 별이 관측되었어요. 주요 별자리를 볼 수 있는 보통 수준의 밤하늘입니다."
+        else:
+            return f"오늘 {star_count}개의 별이 관측되었어요. 도시 불빛으로 인해 별이 잘 보이지 않는 조건입니다."
 
 star_counter = StarCounter()
