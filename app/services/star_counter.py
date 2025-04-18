@@ -23,7 +23,7 @@ class StarCounter:
             debug: 디버그 모드 활성화 여부 (추후 구현해야함)
 
         Returns:
-            Dict: 별 개수 및 관련 정보 (추후 구현해야 함, 현재는 기본 딕셔너리 반환)
+            Dict: 별 개수 및 관련 정보 
         """
         try:
             start_time = datetime.now()
@@ -86,16 +86,23 @@ class StarCounter:
                         continue
                     circularity = 4 * np.pi * area / (perimeter * perimeter)
 
-                    if circularity >= min_circularity:              # 원형도 필터링
-                        stars.append(contour)
+                    if circularity >= min_circularity:
+                        M = cv2.moments(contour)        # 무게중심 계산
+                        if M["m00"] == 0:
+                            continue
+
+                        cx = int(M["m10"] / M["m00"])
+                        cy = int(M["m01"] / M["m00"])
+
+                        stars.append((cx, cy))              # 유효한 별의 좌표를  저장
 
             processing_time = (datetime.now() - start_time).total_seconds()
             star_count = len(stars)
 
             return {
                 "star_count": star_count,
-                "processing_time": processing_time,
-                "filtered_stars_count": star_count
+                "stars": stars,
+                "processing_time": processing_time
             }
 
         except FileNotFoundError as e:
