@@ -14,12 +14,16 @@ router = APIRouter(
 async def upload(
     latitude: float = Form(...),
     longitude: float = Form(...),
-    image: UploadFile = File(...)
+    image: UploadFile = File(...),
+    title: str = Form(...),  
+    content: str = Form(...), 
+    manual_star_count: int = Form(None),
 ):
     """
     밤하늘 사진 업로드 및 별 개수 분석 API
     """
     print(f"위도 {latitude}, 경도 {longitude} 확인")
+    print(f"사용자가 직접 입력한 별 개수: {manual_star_count}")
     # 파일 확장자 확인
     file_extension = os.path.splitext(image.filename)[1]
     if file_extension.lower() not in ['.jpg', '.jpeg', '.png']:
