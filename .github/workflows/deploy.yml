@@ -26,6 +26,7 @@ jobs:
       run: |
         ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} '
           cd /home/${{ secrets.EC2_USERNAME }}/counting-stars &&
+          git branch --set-upstream-to=origin/main main &&
           git pull &&
           source venv/bin/activate &&
           pip install -r requirements.txt &&
