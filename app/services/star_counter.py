@@ -103,8 +103,6 @@ class StarCounter:
 
             return {
                 "star_count": star_count,
-                "stars": stars,
-                "processing_time": processing_time,
                 "star_category": star_category,
                 "ui_message": ui_message
             }
@@ -126,11 +124,12 @@ class StarCounter:
         Returns:
             str: 관측 카테고리 (최상급/좋음/보통/나쁨)
         """
-        if star_count >= 1000:
+        # 기준점은 추후 변경 가능
+        if star_count >= 500:
             return "최상급"
-        elif star_count >= 300:
+        elif star_count >= 100:
             return "좋음"
-        elif star_count >= 30:
+        elif star_count >= 15:
             return "보통"
         else:
             return "나쁨"
@@ -144,15 +143,23 @@ class StarCounter:
             category: 별 관측 카테고리
 
         Returns:
-            str: 사용자 친화적 메시지
+            str: 메시지
         """
         if category == "최상급":
-            return f"오늘 {star_count}별이 관측되었어요. 은하수도 선명하게 관측할 수 있는 최상의 조건입니다."
+            return f"오늘 {star_count}별이 관측되었어요. 은하수도 선명하게 관측할 수 있는 최상의 조건이에요."
         elif category == "좋음":
-            return f"오늘 {star_count}개의 별이 관측되었어요. 많은 별자리를 볼 수 있는 좋은 관측 조건입니다."
+            return f"오늘 {star_count}개의 별이 관측되었어요. 많은 별자리를 볼 수 있는 좋은 관측 조건이에요."
         elif category == "보통":
-            return f"오늘 {star_count}개의 별이 관측되었어요. 주요 별자리를 볼 수 있는 보통 수준의 밤하늘입니다."
+            return f"오늘 {star_count}개의 별이 관측되었어요. 주요 별자리를 볼 수 있는 보통 수준의 밤하늘이에요."
         else:
-            return f"오늘 {star_count}개의 별이 관측되었어요. 도시 불빛으로 인해 별이 잘 보이지 않는 조건입니다."
+            return f"오늘 {star_count}개의 별이 관측되었어요. 도시 불빛으로 인해 별이 잘 보이지 않는 조건이에요."
 
 star_counter = StarCounter()
+
+# 프론트에서 받는 응답값 형식
+
+# {
+#   "star_count": 15,
+#   "star_category": "좋음",
+#   "ui_message": "오늘 15개의 별이 관측되었어요. 주요 별자리를 볼 수 있는 보통 수준의 밤하늘이에요."
+# }
