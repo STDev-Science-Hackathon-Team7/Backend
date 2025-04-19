@@ -1,15 +1,22 @@
-from fastapi import APIRouter, File, Form, HTTPException, UploadFile, Depends
+from datetime import datetime
+from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from app.config import settings
 import os
 import shutil
 import uuid
-from app.services.star_counter import star_counter  
+from app.services.star_counter import star_counter
+from pymongo import MongoClient
 
 router = APIRouter(
     prefix="/api",
     tags=["observations"],
     responses={404: {"description": "Not found"}},
 )
+
+# MongoDB 클라이언트 생성 및 연결 
+client = MongoClient(settings.MONGO_URI)
+db = client[settings.MONGO_DB_NAME]
+observations_collection = db["observations"]  
 
 @router.post("/upload")
 async def upload(
@@ -21,7 +28,7 @@ async def upload(
     manual_star_count_range: str = Form(...),
 ):
     """
-    밤하늘 사진 업로드 및 별 개수 분석 API
+    밤하늘 사진 업로드 및 별 개수 분석 API (MongoDB 저장)
     """
     print(f"위도 {latitude}, 경도 {longitude} 확인")
     print(f"글 제목: {title}, 글 내용: {content}")
@@ -44,18 +51,18 @@ async def upload(
         star_category_from_analysis = analysis_result.get("star_category")
         ui_message_from_analysis = analysis_result.get("ui_message")
 
-        # 사용자 직접 입력 별 개수 범위 처리 - 로직 바꿔야할수도 있음
+        # 사용자 직접 입력 별 개수 범위 처리
         manual_star_count = None
         if manual_star_count_range == "0":
             manual_star_count = 0
         elif manual_star_count_range == "1~4":
-            manual_star_count = 2  
+            manual_star_count = 2
         elif manual_star_count_range == "5~8":
             manual_star_count = 6
         elif manual_star_count_range == "9+":
-            manual_star_count = 9 
+            manual_star_count = 9
 
-        final_result = {
+        observation_data = {
             "image_analysis": {
                 "star_count": star_count_from_analysis,
                 "star_category": star_category_from_analysis,
@@ -69,28 +76,25 @@ async def upload(
             },
             "latitude": latitude,
             "longitude": longitude,
-            # "filename": unique_filename,
+            "filename": unique_filename,
+            "uploaded_at": datetime.now()  
         }
 
+        # MongoDB에 데이터 삽입
+        inserted_result = observations_collection.insert_one(observation_data)
+        inserted_id = str(inserted_result.inserted_id)
+        print(f"MongoDB에 데이터 저장 완료. ObjectId: {inserted_id}")
+
+        # 저장된 데이터와 ObjectId를 포함한 응답 반환 
+        final_result = observation_data
+        final_result["_id"] = inserted_id
         return final_result
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"별 개수 분석 오류: {str(e)}")
-    
+        raise HTTPException(status_code=500, detail=f"별 개수 분석 및 MongoDB 저장 오류: {str(e)}")
 
-# 프론트엔드로 전송할 응답 형식 예시
-# {
-#   "image_analysis": {
-#     "star_count": 125,
-#     "star_category": "좋음",
-#     "ui_message": "오늘 125개의 별이 관측되었어요. 많은 별자리를 볼 수 있는 좋은 관측 조건이에요."
-#   },
-#   "user_input": {
-#     "title": "오늘 밤 하늘 관측",
-#     "content": "집 근처 공원에서 찍은 밤하늘 사진입니다. 별이 꽤 많이 보이네요!",
-#     "manual_star_count_range": "100~299",
-#     "manual_star_count": 199
-#   },
-#   "latitude": 37.5665,
-#   "longitude": 126.9780,
-# }
+# 앱 종료 시 MongoDB 연결 닫기 
+# @app.on_event("shutdown")
+# def shutdown_event():
+#     client.close()
+#     print("MongoDB 연결 종료")
