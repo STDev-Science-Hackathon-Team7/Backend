@@ -28,8 +28,9 @@ jobs:
           DEPLOY_PATH="/home/${{ secrets.EC2_USERNAME }}/counting-stars"
           cd "$DEPLOY_PATH" || mkdir -p "$DEPLOY_PATH" && cd "$DEPLOY_PATH"
 
-          git clone --depth 1 ${{ github.repository }} .
+          git clone --depth 1 https://github.com/${{ github.repository }}.git .
 
+          python3 -m venv venv
           source venv/bin/activate
 
           pip install -r requirements.txt
