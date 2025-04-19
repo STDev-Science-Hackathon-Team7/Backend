@@ -122,17 +122,17 @@ class StarCounter:
             star_count: 감지된 별의 개수
 
         Returns:
-            str: 관측 카테고리 (최상급/좋음/보통/나쁨)
+            str: 관측 카테고리 (최상급-레벨4/좋음-레벨3/보통-레벨2/나쁨-레벨1)
         """
         # 기준점은 추후 변경 가능
         if star_count >= 500:
-            return "최상급"
+            return "레벨 4"
         elif star_count >= 100:
-            return "좋음"
+            return "레벨 3"
         elif star_count >= 15:
-            return "보통"
+            return "레벨 2"
         else:
-            return "나쁨"
+            return "레벨 1"
     
     def get_star_count_message(self, star_count: int, category: str) -> str:
         """
@@ -145,11 +145,11 @@ class StarCounter:
         Returns:
             str: 메시지
         """
-        if category == "최상급":
-            return f"오늘 {star_count}별이 관측되었어요. 은하수도 선명하게 관측할 수 있는 최상의 조건이에요."
-        elif category == "좋음":
+        if category == "레벨 4":
+            return f"오늘 {star_count}개의 별이 관측되었어요. 은하수도 선명하게 관측할 수 있는 최상의 조건이에요."
+        elif category == "레벨 3":
             return f"오늘 {star_count}개의 별이 관측되었어요. 많은 별자리를 볼 수 있는 좋은 관측 조건이에요."
-        elif category == "보통":
+        elif category == "레벨 2":
             return f"오늘 {star_count}개의 별이 관측되었어요. 주요 별자리를 볼 수 있는 보통 수준의 밤하늘이에요."
         else:
             return f"오늘 {star_count}개의 별이 관측되었어요. 도시 불빛으로 인해 별이 잘 보이지 않는 조건이에요."
