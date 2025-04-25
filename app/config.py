@@ -9,9 +9,9 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api"
     DEBUG: bool = os.getenv("DEBUG", "False").lower() == "true"
     
-    MONGO_URI: str = os.getenv("MONGO_URI")
+    MONGO_URI: str = "mongodb://localhost:27017/"
     MONGO_DB_NAME: str = os.getenv("MONGO_DB_NAME")
-    
+
     UPLOAD_DIR: str = os.getenv("UPLOAD_DIR")
     MAX_UPLOAD_SIZE: int = int(os.getenv("MAX_UPLOAD_SIZE", 10 * 1024 * 1024))  
     ALLOWED_EXTENSIONS: list = ["jpg", "jpeg", "png"]
