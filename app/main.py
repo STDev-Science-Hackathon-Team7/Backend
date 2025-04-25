@@ -1,9 +1,7 @@
-from app.services.database import close_db, connect_db, get_client
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
-import os
 from pymongo import MongoClient
 
 from app.config import settings
@@ -13,21 +11,12 @@ from app.routers.observation_spots import router as spots_router
 app = FastAPI(
     title=settings.APP_NAME,
     description="빛공해 데이터 기반 별 관측 장소 추천 및 밤하늘 사진 분석 API",
-    title=settings.APP_NAME,
-    description="빛공해 데이터 기반 별 관측 장소 추천 및 밤하늘 사진 분석 API",
     version="1.0.0",
     docs_url="/api/docs",
     redoc_url="/api/redoc",
     openapi_url="/api/openapi.json",
 )
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
