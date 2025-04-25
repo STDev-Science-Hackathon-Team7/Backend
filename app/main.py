@@ -2,12 +2,10 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
-from pymongo import MongoClient
-
 from app.config import settings
 from app.routers import observations
 from app.routers.observation_spots import router as spots_router
-
+from pymongo import MongoClient
 app = FastAPI(
     title=settings.APP_NAME,
     description="빛공해 데이터 기반 별 관측 장소 추천 및 밤하늘 사진 분석 API",
@@ -43,8 +41,6 @@ app.include_router(observations.router)
 app.include_router(spots_router)
 #app.mount("/uploads", StaticFiles(directory=settings.UPLOAD_DIR), name="uploads")
 app.mount("/upload", StaticFiles(directory=str(settings.UPLOAD_DIR)), name="upload")
-
-
 
 @app.get("/")
 async def root():

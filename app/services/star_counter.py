@@ -1,18 +1,16 @@
-import cv2
-import os
+from app.config import settings
 from datetime import datetime
 from fastapi import logger
 import numpy as np
-from app.config import settings
-
 import logging
+import cv2
+import os
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class StarCounter:
     """밤하늘 사진에서 별의 개수를 세는 OpenCV 기반 알고리즘"""
-
     def __init__(self):
         cv2.setNumThreads(16)
         self.debug_dir = os.path.join(settings.UPLOAD_DIR, "debug")
@@ -37,8 +35,7 @@ class StarCounter:
         blue_pixels = np.sum(blue_mask > 0) / (img.shape[0] * img.shape[1])
         
         is_night = (avg_brightness < 100 and dark_pixels > 0.6)
-        
-        
+
         return is_night
 
     def filter_light_sources(self, img, stars):

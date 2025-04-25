@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Query, Path
-from typing import List, Optional
+from typing import Optional
 from datetime import datetime
 from pymongo import MongoClient, GEOSPHERE
 from bson import ObjectId

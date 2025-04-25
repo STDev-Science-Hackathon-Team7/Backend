@@ -1,9 +1,12 @@
 from datetime import datetime, timedelta
-from fastapi import APIRouter, File, Form, HTTPException, UploadFile, Depends, Query
+from fastapi import APIRouter, File, Form, HTTPException, UploadFile, Query
 from app.config import settings
 import os
 import shutil
 import uuid
+from bson import ObjectId
+from pydantic import BaseModel, Field
+from typing import List, Optional
 from app.services.star_counter import star_counter  
 from pymongo import MongoClient
 
@@ -93,29 +96,6 @@ async def upload(
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"별 개수 분석 오류: {str(e)}")
-    
-
-# 프론트엔드로 전송할 응답 형식 예시
-# {
-#   "image_analysis": {
-#     "star_count": 125,
-#     "star_category": "좋음",
-#     "ui_message": "오늘 125개의 별이 관측되었어요. 많은 별자리를 볼 수 있는 좋은 관측 조건이에요."
-#   },
-#   "user_input": {
-#     "title": "오늘 밤 하늘 관측",
-#     "content": "집 근처 공원에서 찍은 밤하늘 사진입니다. 별이 꽤 많이 보이네요!",
-#     "manual_star_count_range": "100~299",
-#     "manual_star_count": 199
-#   },
-#   "latitude": 37.5665,
-#   "longitude": 126.9780,
-# }
-
-
-from bson import ObjectId
-from pydantic import BaseModel, Field
-from typing import List, Optional
 
 # JSON 직렬화를 위한 ObjectId 처리 
 class PyObjectId(ObjectId):
@@ -161,7 +141,6 @@ class ObservationsListModel(BaseModel):
             datetime: lambda dt: dt.isoformat()
         }
 
-# 기존 라우터에 추가
 @router.get("/observations", response_model=ObservationsListModel, summary="모든 관측 데이터 조회 API")
 async def get_all_observations(
     skip: int = Query(0, ge=0),
