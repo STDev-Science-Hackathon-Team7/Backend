@@ -2,7 +2,7 @@ from pymongo import MongoClient
 from pymongo.database import Database
 import os
 import logging
-from fastapi import Depends  # Depends 임포트
+from fastapi import Depends  
 
 logger = logging.getLogger(__name__)
 

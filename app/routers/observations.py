@@ -27,7 +27,7 @@ async def upload(
     manual_star_count_range: str = Form(...),
 ):
     """
-    밤하늘 사진 업로드 및 별 개수 분석 API
+    밤하늘 사진 업로드 및 별 개수 분석 API (MongoDB 저장)
     """
     print(f"위도 {latitude}, 경도 {longitude} 확인")
     print(f"글 제목: {title}, 글 내용: {content}")
@@ -51,16 +51,16 @@ async def upload(
         ui_message_from_analysis = analysis_result.get("ui_message")
         image_url = f"https://counting-stars.info/upload/{unique_filename}"
 
-        # 사용자 직접 입력 별 개수 범위 처리 - 로직 바꿔야할수도 있음
+        # 사용자 직접 입력 별 개수 범위 처리
         manual_star_count = None
         if manual_star_count_range == "0":
             manual_star_count = 0
         elif manual_star_count_range == "1~4":
-            manual_star_count = 2  
+            manual_star_count = 2
         elif manual_star_count_range == "5~8":
             manual_star_count = 6
         elif manual_star_count_range == "9+":
-            manual_star_count = 9 
+            manual_star_count = 9
 
         observation_data = {
             "image_analysis": {
