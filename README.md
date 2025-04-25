@@ -39,10 +39,11 @@
 다양한 천문학적 지표를 통합하여 밤하늘의 질을 정밀하게 평가하는 모델을 개발했습니다. 국제 천문학계의 표준 측정 방식을 가중치 행렬로 최적화하여 직관적인 관측 점수를 제공합니다.
 
 * **Bortle Scale (35%)**
+
     $$\left( \frac{9 - \text{bortle\_scale}}{8} \right) \times 100$$
+
     * 국제 암천 협회(IDA) 표준 지표
     * 1~9 등급 비선형 스케일 정규화
-    * 전문 천문대 관측 기준과 일치 검증
 
 * **SQM (25%)**
     $$\left( \frac{\text{sqm} - 16}{6} \right) \times 100$$
@@ -52,14 +53,21 @@
 
 * **밝기 요소 (30%)**
     * 기본 밝기 (15%)
+
         $$\left( \frac{5 - \text{brightness}}{5} \right) \times 100$$
+
     * 인공 광원 밝기 (10%)
+
         $$\left( \frac{5 - \text{artificial\_brightness}}{5} \right) \times 100$$
+
     * 밝기 비율 (5%)
+
         $$\left( \frac{10 - \text{ratio}}{10} \right) \times 100$$
 
 * **고도 (10%)**
+
     $$\left( \frac{\text{elevation}}{2000} \right) \times 100$$
+
     * 대기층 투과도 모델 적용
     * 고도별 광산란 감쇠 계수 반영
 
